@@ -5,7 +5,7 @@ source make.env
 source public_funcs
 init_work_env
 
-# 盒子型号识别参数 
+# 盒子型号识别参数
 PLATFORM=amlogic
 SOC=s905d
 BOARD=n1
@@ -53,7 +53,7 @@ BANNER="${PWD}/files/banner"
 
 # 20200314 add
 FMW_HOME="${PWD}/files/firmware"
-SMB4_PATCH="${PWD}/files/smb4.11_enable_smb1.patch"
+# SMB4_PATCH="${PWD}/files/smb4.11_enable_smb1.patch"
 SYSCTL_CUSTOM_CONF="${PWD}/files/99-custom.conf"
 
 # 20200930 add
@@ -86,16 +86,16 @@ SS_LIB="${PWD}/files/ss-glibc/lib-glibc.tar.xz"
 SS_BIN="${PWD}/files/ss-glibc/armv8a_crypto/ss-bin-glibc.tar.xz"
 JQ="${PWD}/files/jq"
 
-# 20210330 add
-DOCKERD_PATCH="${PWD}/files/dockerd.patch"
+# 20210330 add dockerd patch
+# DOCKERD_PATCH="${PWD}/files/dockerd.patch"
 
 # 20200416 add
 FIRMWARE_TXZ="${PWD}/files/firmware_armbian.tar.xz"
 BOOTFILES_HOME="${PWD}/files/bootfiles/amlogic"
 GET_RANDOM_MAC="${PWD}/files/get_random_mac.sh"
 
-# 20210618 add
-DOCKER_README="${PWD}/files/DockerReadme.pdf"
+# 20210618 add docker readme
+# DOCKER_README="${PWD}/files/DockerReadme.pdf"
 
 # 20210704 add
 SYSINFO_SCRIPT="${PWD}/files/30-sysinfo.sh"
@@ -114,11 +114,14 @@ BTLD_BIN="${PWD}/files/s905d/u-boot-2015-phicomm-n1.bin"
 
 # 20211024 add
 MODEL_DB="${PWD}/files/amlogic_model_database.txt"
+
 # 20211214 add
 P7ZIP="${PWD}/files/7z"
+
 # 20211217 add
 DDBR="${PWD}/files/openwrt-ddbr"
-# 20220225 add
+
+# 20220225 add ssh ciphers config
 SSH_CIPHERS="aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr,chacha20-poly1305@openssh.com"
 SSHD_CIPHERS="aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr"
 ###########################################################################
@@ -142,7 +145,7 @@ extract_amlogic_boot_files
 echo "修改引导分区相关配置 ... "
 cd $TGT_BOOT
 rm -f uEnv.ini
-cat > uEnv.txt <<EOF
+cat >uEnv.txt <<EOF
 LINUX=/zImage
 INITRD=/uInitrd
 
@@ -167,10 +170,10 @@ echo "修改根文件系统相关配置 ... "
 cd $TGT_ROOT
 copy_supplement_files
 extract_glibc_programs
-adjust_docker_config
+# adjust_docker_config
 adjust_openssl_config
 adjust_getty_config
-adjust_samba_config
+# adjust_samba_config
 adjust_openssh_config
 use_xrayplug_replace_v2rayplug
 create_fstab_config
@@ -179,7 +182,7 @@ patch_admin_status_index_html
 adjust_kernel_env
 copy_uboot_to_fs
 write_release_info
-write_banner 
+write_banner
 config_first_run
 create_snapshot "etc-000"
 write_uboot_to_disk

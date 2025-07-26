@@ -10,8 +10,8 @@ PLATFORM=amlogic
 SOC=s905d
 BOARD=n1
 
-# 让N1一直有wifi可用，以减少抱怨
-# 5.10(及以上)内核是否启用wifi  1:启用 0:禁用
+# 让 N1 一直有 wifi 可用，以减少抱怨
+# 5.10( 及以上 ) 内核是否启用 wifi  1: 启用 0: 禁用
 ENABLE_WIFI_K510=0
 
 SUBVER=$1
@@ -86,7 +86,7 @@ SS_LIB="${PWD}/files/ss-glibc/lib-glibc.tar.xz"
 SS_BIN="${PWD}/files/ss-glibc/armv8a_crypto/ss-bin-glibc.tar.xz"
 JQ="${PWD}/files/jq"
 
-# 20210330 add dockerd patch
+# 20210330 add
 # DOCKERD_PATCH="${PWD}/files/dockerd.patch"
 
 # 20200416 add
@@ -94,7 +94,7 @@ FIRMWARE_TXZ="${PWD}/files/firmware_armbian.tar.xz"
 BOOTFILES_HOME="${PWD}/files/bootfiles/amlogic"
 GET_RANDOM_MAC="${PWD}/files/get_random_mac.sh"
 
-# 20210618 add docker readme
+# 20210618 add
 # DOCKER_README="${PWD}/files/DockerReadme.pdf"
 
 # 20210704 add
@@ -114,14 +114,11 @@ BTLD_BIN="${PWD}/files/s905d/u-boot-2015-phicomm-n1.bin"
 
 # 20211024 add
 MODEL_DB="${PWD}/files/amlogic_model_database.txt"
-
 # 20211214 add
 P7ZIP="${PWD}/files/7z"
-
 # 20211217 add
 DDBR="${PWD}/files/openwrt-ddbr"
-
-# 20220225 add ssh ciphers config
+# 20220225 add
 SSH_CIPHERS="aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr,chacha20-poly1305@openssh.com"
 SSHD_CIPHERS="aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr"
 ###########################################################################
@@ -149,7 +146,7 @@ cat >uEnv.txt <<EOF
 LINUX=/zImage
 INITRD=/uInitrd
 
-# 下列 dtb，用到哪个就把哪个的#删除，其它的则加上 # 在行首
+# 下列 dtb, 用到哪个就把哪个的#删除，其它的则加上 # 在行首
 
 # 用于 Phicomm N1
 FDT=/dtb/amlogic/meson-gxl-s905d-phicomm-n1.dtb
@@ -173,7 +170,7 @@ extract_glibc_programs
 # adjust_docker_config
 adjust_openssl_config
 adjust_getty_config
-# adjust_samba_config
+adjust_samba_config
 adjust_openssh_config
 use_xrayplug_replace_v2rayplug
 create_fstab_config

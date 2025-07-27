@@ -51,32 +51,5 @@ echo "Installing packages via feeds system..."
 ./scripts/feeds install -f chinadns-ng dns2socks microsocks ipt2socks naiveproxy trojan
 ./scripts/feeds install -f luci-app-ssr-plus
 
-# Configure aarch64-specific build flags for packages
-echo "Configuring aarch64 optimizations for additional packages..."
-
-# Fix linker configuration globally for OpenWrt build
-echo "Fixing linker configuration for aarch64..."
-if [ -f "include/package-defaults.mk" ]; then
-    # Create a temporary patch to fix linker flags
-    if ! grep -q "fuse-ld=bfd" include/package-defaults.mk; then
-        echo "Applying linker fix to package-defaults.mk..."
-        sed -i 's/-fuse-ld=ld\.bfd/-fuse-ld=bfd/g' include/package-defaults.mk 2>/dev/null || true
-    fi
-fi
-
-# Set Go/Rust package architecture targeting
-if [ -f "feeds/packages/lang/golang/golang-values.mk" ]; then
-    echo "Setting Go architecture to arm64 for aarch64"
-    sed -i 's/GO_ARCH:=.*/GO_ARCH:=arm64/' feeds/packages/lang/golang/golang-values.mk
-fi
-
-if [ -f "feeds/packages/lang/rust/rust-values.mk" ]; then
-    echo "Setting Rust target architecture for aarch64"
-    # Ensure aarch64 specific flags are applied
-    echo 'RUSTC_CFLAGS+=-mcpu=cortex-a53 -mtune=cortex-a53' >> feeds/packages/lang/rust/rust-values.mk
-    # Fix Rust linker configuration
-    sed -i 's/CARGO_RUSTFLAGS+=.*-Clink-arg=-fuse-ld=.*/CARGO_RUSTFLAGS+=-Clink-arg=-fuse-ld=bfd/' feeds/packages/lang/rust/rust-values.mk 2>/dev/null || true
-fi
-
 # Clean packages
 # rm -rf clone

@@ -13,61 +13,7 @@ export DEBIAN_FRONTEND=noninteractive
 export WORKDIR="/workdir"
 export GITHUB_WORKSPACE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# aarch64 Cross-compilation environment
-export ARCH="aarch64"
-export TARGET_ARCH="aarch64"
-export TARGET_OPTIMIZATION="-O2 -pipe -mcpu=cortex-a53"
-export CONFIG_ARCH="aarch64"
-export GNU_TARGET_NAME="aarch64-openwrt-linux-musl"
-export REAL_GNU_TARGET_NAME="aarch64-openwrt-linux-musl"
-
-# Additional environment for Go packages like xray-core
-export HOSTCC="gcc"
-export HOSTCXX="g++"
-export HOSTCC_NOCACHE="gcc"
-export HOSTCXX_NOCACHE="g++"
-export HOST_CFLAGS="-O2 -pipe"
-export HOST_CXXFLAGS="-O2 -pipe"
-
-# Go toolchain for aarch64 - Enhanced for xray-core
-export GOOS="linux"
-export GOARCH="arm64"
-export CGO_ENABLED=1
-export CC_FOR_TARGET="aarch64-openwrt-linux-musl-gcc"
-export CXX_FOR_TARGET="aarch64-openwrt-linux-musl-g++"
-
-# Critical Go cross-compilation fixes for aarch64
-export GO111MODULE=on
-export GOPROXY=direct
-export GOSUMDB=off
-export CGO_LDFLAGS="-L$STAGING_DIR/lib -L$STAGING_DIR/usr/lib"
-export CGO_CPPFLAGS="-I$STAGING_DIR/include -I$STAGING_DIR/usr/include"
-export GO_GCC_HELPER_CC="aarch64-openwrt-linux-musl-gcc"
-export GO_GCC_HELPER_CXX="aarch64-openwrt-linux-musl-g++"
-
-# Rust toolchain for aarch64 - Fixed linker
-export CARGO_BUILD_TARGET="aarch64-unknown-linux-musl"
-export RUSTC_TARGET_ARCH="aarch64-unknown-linux-musl"
-export RUSTFLAGS="-C target-cpu=cortex-a53 -C target-feature=+neon -C link-arg=-fuse-ld=bfd"
-export CARGO_RUSTFLAGS="-C target-cpu=cortex-a53 -C target-feature=+neon -mno-outline-atomics -C link-arg=-fuse-ld=bfd"
-
-# General cross-compilation settings
-export CROSS_COMPILE="aarch64-openwrt-linux-musl-"
-export CC="aarch64-openwrt-linux-musl-gcc"
-export CXX="aarch64-openwrt-linux-musl-g++"
-export AR="aarch64-openwrt-linux-musl-ar"
-export STRIP="aarch64-openwrt-linux-musl-strip"
-export RANLIB="aarch64-openwrt-linux-musl-ranlib"
-
-# Fix linker configuration - correct bfd linker flag
-export TARGET_LINKER="bfd"
-export LDFLAGS="-Wl,-O1 -Wl,--as-needed -Wl,--gc-sections"
-
 echo "=== Starting N1 OpenWrt Local Build ==="
-
-# Load aarch64 toolchain environment
-echo "Loading aarch64 toolchain environment..."
-source $GITHUB_WORKSPACE/aarch64-toolchain.env
 
 # Initialize environment
 echo "Step 1: Installing dependencies..."
@@ -123,45 +69,16 @@ find dl -size -1k -exec ls -l {} \;
 find dl -size -1k -exec rm -f {} \;
 
 # Compile firmware
-echo "Step 7: Compiling N1 firmware with aarch64 optimizations..."
+echo "Step 7: Compiling N1 firmware..."
 chmod -R 755 .
 echo "Using $(nproc) threads for compilation"
 
-# Set additional build environment for aarch64
-export CONFIG_TARGET_OPTIMIZATION="-O2 -pipe -mcpu=cortex-a53 -mtune=cortex-a53"
-export CFLAGS="-O2 -pipe -mcpu=cortex-a53 -mtune=cortex-a53"
-export CXXFLAGS="-O2 -pipe -mcpu=cortex-a53 -mtune=cortex-a53"
-export LDFLAGS="-Wl,-O1 -Wl,--as-needed -Wl,--gc-sections"
-
-# Fix CMAKE linker issues for aarch64
-export CMAKE_C_FLAGS="-O2 -pipe -mcpu=cortex-a53 -mtune=cortex-a53"
-export CMAKE_CXX_FLAGS="-O2 -pipe -mcpu=cortex-a53 -mtune=cortex-a53"
-export CMAKE_EXE_LINKER_FLAGS="-fuse-ld=bfd"
-export CMAKE_SHARED_LINKER_FLAGS="-fuse-ld=bfd"
-export CMAKE_MODULE_LINKER_FLAGS="-fuse-ld=bfd"
-
-# Ensure toolchain paths are set correctly
-export PATH="$WORKDIR/openwrt/staging_dir/toolchain-aarch64_generic_gcc-13.3.0_musl/bin:$PATH"
-export STAGING_DIR="$WORKDIR/openwrt/staging_dir/toolchain-aarch64_generic_gcc-13.3.0_musl"
-
-# Force architecture settings
-echo "CONFIG_ARCH=\"aarch64\"" >> .config
-echo "CONFIG_TARGET_ARCH_PACKAGES=\"aarch64_generic\"" >> .config
-echo "CONFIG_TARGET_OPTIMIZATION=\"-O2 -pipe -mcpu=cortex-a53\"" >> .config
-make defconfig
-
 # Build with explicit architecture targeting
-make -j$(( $(nproc) + 1 )) V=s ARCH=aarch64 TARGET_ARCH=aarch64 || make -j1 V=s ARCH=aarch64 TARGET_ARCH=aarch64
+chmod +x .
+make -j$(( $(nproc) + 1 )) || make -j1 V=s
 
 # Package firmware
-echo "Step 8: Packaging firmware..."
-if [ ! -f "bin/targets/armsr/armv8/"*rootfs.tar.gz ]; then
-    echo "Error: rootfs.tar.gz not found!"
-    exit 1
-fi
-
-# Step 9: Package armsr as openwrt (N1 specific)
-echo "Step 9: Package armsr as openwrt for N1..."
+echo "Step 8: Package armsr as openwrt for N1..."
 
 # Set environment variables exactly like GitHub workflow
 export OPENWRT_ARMVIRT="openwrt/bin/targets/armsr/armv8/*rootfs.tar.gz"

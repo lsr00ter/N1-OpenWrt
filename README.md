@@ -8,11 +8,11 @@
 
 - [luci-app-amlogic](https://github.com/ophub/luci-app-amlogic)：系统更新、文件传输、CPU 调频等
 - [luci-app-passwall](https://github.com/xiaorouji/openwrt-passwall)：科学上网
-- [luci-app-ssrplus]：科学上网
+- [luci-app-ssrplus](https://github.com/fw876/helloworld)：科学上网
 
 ### 更新说明
 
-- 添加 ssrplus
+- 添加 luci-app-ssrplus
 - 移除 Docker 支持
 - 移除 SMB 支持
 
